@@ -66,9 +66,11 @@
         </div>
       </div>
 
-      <div v-for="(usr, usrIdx) in appointments" id="0" class="row">
-        <div v-for="(day, dayIdx) in appointments[usrIdx]" id="00" class="col-sm">
-          <div v-for="(appointment, appointmentIdx) in appointments[usrIdx][dayIdx]"><strong>{{grid.appointments[usrIdx][dayIdx][appointmentIdx].appointment}}</strong></div>
+      <div v-for="(usr, usrIdx) in appointments" v-bind:id="[usrIdx]" class="row">
+        <div v-for="(day, dayIdx) in appointments[usrIdx]" v-bind:id="[dayIdx]" class="col-sm">
+          <div v-for="(appointment, appointmentIdx) in appointments[usrIdx][dayIdx]" v-bind:id="[appointmentIdx]">
+            <div v-on:click="alert('click')" v-html="grid.appointments[usrIdx][dayIdx][appointmentIdx].appointment"></div>
+          </div>
         </div>
       </div>
 
@@ -98,42 +100,10 @@
      })
      // grid dimensions
      const cols = 5;
-     const rows = 10;
-     const cellEvents = 20;
+     const rows = 20;
+     const cellEvents = 10;
 
      const events = cols * rows * cellEvents;
-
-     for (var usrIdx=0; usrIdx<rows; usrIdx++) {
-         grid.appointments.push([]);
-         for (var dayIdx=0; dayIdx<cols; dayIdx++) {
-             grid.appointments[usrIdx].push([]);
-             for (var appointmentIdx=0; appointmentIdx<cellEvents; appointmentIdx++) {
-                 grid.appointments[usrIdx][dayIdx].push({appointment: appointmentIdx});
-             }
-         }
-     }
-
-     /* for (var usrIdx=0; usrIdx<grid.appointments.length; usrIdx++) {*/
-     /* console.log('usr: ' + usrIdx);*/
-     /* for (var dayIdx=0; dayIdx<grid.appointments[usrIdx].length; dayIdx++) {*/
-     /* console.log('day: ' + dayIdx);*/
-     /* for (var appointmentIdx=0; appointmentIdx<grid.appointments[usrIdx][dayIdx].length; appointmentIdx++) {*/
-     /* console.log(grid.appointments[usrIdx][dayIdx][appointmentIdx].text);*/
-     /* }*/
-     /* }*/
-     /* }*/
-     /* const events = cols * rows * cellEvents;*/
-     /* for (var usrIdx=0; usrIdx<grid.appointments.length; usrIdx++) {*/
-     /* console.log('usr: ' + usrIdx);*/
-     /* for (var dayIdx=0; dayIdx<grid.appointments[usrIdx].length; dayIdx++) {*/
-     /* console.log('day: ' + dayIdx);*/
-     /* for (var appointmentIdx=0; appointmentIdx<grid.appointments[usrIdx][dayIdx].length; appointmentIdx++) {*/
-     /* console.log(grid.appointments[usrIdx][dayIdx][appointmentIdx].text);*/
-     /* }*/
-     /* }*/
-     /* }*/
-     /* grid.appointments.push([{ text: 'day 0' }], [{ text: 'day 1' }], [{ text: 'day 2' }], [{ text: 'day 3' }], [{ text: 'day 4' }]);*/
-
 
      // dimensions info in h1
      var h1 = document.querySelector('body > h1');
@@ -186,44 +156,47 @@
          node.className += ' event';
          node.innerHTML = date;
          node.addEventListener("click", clickFunction, false);
-         return node;
+         var container = document.createElement('div');
+         container.appendChild(node);
+         return container;
      }
 
-     function insertEvents (col, amount) {
-         // insert events into given column
-         for (var i=0; i<amount; i++) {
-             var e = buildEvent();
-             col.appendChild(e);
-         }
-         return col;
+     function genGrid () {
+        // build rows, columns; fill with appointments
+        for (var usrIdx=0; usrIdx<rows; usrIdx++) {
+            grid.appointments.push([]);
+            for (var dayIdx=0; dayIdx<cols; dayIdx++) {
+                grid.appointments[usrIdx].push([]);
+                for (var appointmentIdx=0; appointmentIdx<cellEvents; appointmentIdx++) {
+                    var a = buildEvent();
+                    grid.appointments[usrIdx][dayIdx].push({appointment: a.innerHTML});
+                }
+            }
+        }
      }
 
-     function buildRow (idx) {
-         // a bootstrap row with the id=idx
-         var row = document.createElement('div');
-         row.id = idx;
-         row.className = 'row';
+     genGrid();
 
-         for (var i=0; i<cols; i++) {
-             var col = document.createElement('div');
-             col.id = String(idx) + i;
-             col.className = 'col-sm';
-             col = insertEvents(col, cellEvents)
-             row.appendChild(col);
-         }
-         return row;
-     }
-
-     function renderGrid () {
-         // append rows and cols to the div with the id grid
-         var grid = document.getElementById('grid');
-         for (var i=0; i<rows; i++) {
-             var r = buildRow(i + 1);
-             grid.appendChild(r);
-         }
-     }
-
-     /* renderGrid();*/
+     /* for (var usrIdx=0; usrIdx<grid.appointments.length; usrIdx++) {*/
+     /* console.log('usr: ' + usrIdx);*/
+     /* for (var dayIdx=0; dayIdx<grid.appointments[usrIdx].length; dayIdx++) {*/
+     /* console.log('day: ' + dayIdx);*/
+     /* for (var appointmentIdx=0; appointmentIdx<grid.appointments[usrIdx][dayIdx].length; appointmentIdx++) {*/
+     /* console.log(grid.appointments[usrIdx][dayIdx][appointmentIdx].text);*/
+     /* }*/
+     /* }*/
+     /* }*/
+     /* const events = cols * rows * cellEvents;*/
+     /* for (var usrIdx=0; usrIdx<grid.appointments.length; usrIdx++) {*/
+     /* console.log('usr: ' + usrIdx);*/
+     /* for (var dayIdx=0; dayIdx<grid.appointments[usrIdx].length; dayIdx++) {*/
+     /* console.log('day: ' + dayIdx);*/
+     /* for (var appointmentIdx=0; appointmentIdx<grid.appointments[usrIdx][dayIdx].length; appointmentIdx++) {*/
+     /* console.log(grid.appointments[usrIdx][dayIdx][appointmentIdx].text);*/
+     /* }*/
+     /* }*/
+     /* }*/
+     /* grid.appointments.push([{ text: 'day 0' }], [{ text: 'day 1' }], [{ text: 'day 2' }], [{ text: 'day 3' }], [{ text: 'day 4' }]);*/
 
     </script>
   </body>
