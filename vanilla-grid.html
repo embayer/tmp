@@ -15,8 +15,9 @@
     <style>
 
      h1 {
-         background-color: green;
+         background-color: #3a5fcd;
          color: white;
+         text-align: center;
      }
      div {
          border-style: solid;
@@ -27,11 +28,11 @@
          padding: 20px;
      }
      .event {
-         margin: 0px;
+         padding: 4px;
      }
      #headline {
          color: white;
-         background-color: #c4c4c4;
+         background-color: #d8d8d8;
          text-align: center;
      }
 
@@ -65,104 +66,116 @@
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-            crossorigin="anonymous">
+    <!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" -->
+    <!-- integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" -->
+    <!-- crossorigin="anonymous"> -->
+    <!-- </script> -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" -->
+    <!-- integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" -->
+    <!-- crossorigin="anonymous"> -->
+    <!-- </script> -->
+    <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" -->
+    <!-- integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" -->
+    <!-- crossorigin="anonymous"> -->
+    <!-- </script> -->
+    <script type="text/javascript">
+
+     // grid dimensions
+     const cols = 5;
+     const rows = 200;
+     const cellEvents = 20;
+     const events = cols * rows * cellEvents;
+
+     // dimensions info in h1
+     var h1 = document.querySelector('body > h1');
+     h1.textContent += ' (' + events + ' events)';
+
+     var clickFunction = function () {alert('click')};
+
+     function randomDate (start, end) {
+         return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+     }
+
+     function formatDate (date) {
+         // ex: "5 Januar 2018 5:50"
+         var monthNames = [
+             "Januar", "Februar", "März",
+             "April", "Mai", "Juni", "July",
+             "August", "September", "Oktober",
+             "November", "Dezember"
+         ];
+
+         var minute = date.getMinutes();
+         var hour = date.getHours();
+         var day = date.getDate();
+         var monthIndex = date.getMonth();
+         var year = date.getFullYear();
+         var pad = '00';
+         return day + '. ' + monthNames[monthIndex] + ' ' + year + ' ' +
+           (pad+hour).slice(-pad.length) + ':' + (pad+minute).slice(-pad.length);
+     }
+
+     function randomAlertStyle () {
+         // bootstrap alert classnames
+         const styles = ['alert-primary',
+                         'alert-secondary',
+                         'alert-success',
+                         'alert-danger',
+                         'alert-warning',
+                         'alert-info',
+                         'alert-dark'
+         ];
+         return styles[Math.floor(Math.random()*styles.length)];
+     }
+
+
+     function buildEvent () {
+         // colored div with event date and onClick listener
+         var date = formatDate(randomDate(new Date(), new Date(2018, 0, 12)));
+         var node = document.createElement('div');
+         node.className = randomAlertStyle();
+         node.className += ' event';
+         node.innerHTML = date;
+         node.addEventListener("click", clickFunction, false);
+         return node;
+     }
+
+     function insertEvents (col, amount) {
+         // insert events into given column
+         for (var i=0; i<amount; i++) {
+             var e = buildEvent();
+             col.appendChild(e);
+         }
+         return col;
+     }
+
+     function buildRow (idx) {
+         // a bootstrap row with the id=idx
+         var row = document.createElement('div');
+         row.id = idx;
+         row.className = 'row';
+
+         for (var i=0; i<cols; i++) {
+             var col = document.createElement('div');
+             col.id = String(idx) + i;
+             col.className = 'col-sm';
+             col = insertEvents(col, cellEvents)
+             row.appendChild(col);
+         }
+         return row;
+     }
+
+     function renderGrid () {
+         // append rows and cols to the div with the id grid
+         var grid = document.getElementById('grid');
+         for (var i=0; i<rows; i++) {
+             var r = buildRow(i + 1);
+             grid.appendChild(r);
+         }
+     }
+
+     renderGrid();
+
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-            crossorigin="anonymous">
-    </script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js"
-            integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4"
-            crossorigin="anonymous">
-    </script>
-  <script type="text/javascript">
-
-   // grid dimensions
-   const cols = 5;
-   const rows = 20;
-   const cellEvents = 20;
-   const events = cols * rows * cellEvents;
-
-   // dimensions info in h1
-   var h1 = document.querySelector('body > h1');
-   h1.textContent = h1.textContent + ' (' + events + ' events)';
-
-   var clickFunction = function () {alert('click')};
-
-   function randomDate (start, end) {
-       return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
-   }
-
-   function formatDate (date) {
-       // ex: "5 January 2018 5:50"
-       var monthNames = [
-           "January", "February", "March",
-           "April", "May", "June", "July",
-           "August", "September", "October",
-           "November", "December"
-       ];
-
-       var minute = date.getMinutes();
-       var hour = date.getHours();
-       var day = date.getDate();
-       var monthIndex = date.getMonth();
-       var year = date.getFullYear();
-
-       return day + ' ' + monthNames[monthIndex] + ' ' + year + ' ' + hour + ':' + minute;
-   }
-
-
-   function buildEvent () {
-       // colored div with event date and onClick listener
-       var date = formatDate(randomDate(new Date(), new Date(2018, 0, 12)));
-       var node = document.createElement("p");
-       // random color
-       var color = "#"+((1<<24)*Math.random()|0).toString(16);
-       node.innerHTML = date;
-       node.className = 'event';
-       node.style = 'background-color: ' + color + ';';
-       node.addEventListener("click", clickFunction, false);
-       return node;
-   }
-
-   function insertEvents (col, amount) {
-       // insert events into given column
-       for (var i=0; i<amount; i++) {
-           var e = buildEvent();
-           col.appendChild(e);
-       }
-       return col;
-   }
-
-   function buildRow (idx) {
-       // a bootstrap row with the id=idx
-       var row = document.createElement('div');
-       row.id = idx;
-       row.className = 'row';
-
-       for (var i=0; i<cols; i++) {
-           var col = document.createElement('div');
-           col.id = String(idx) + i;
-           col.className = 'col-sm';
-           col = insertEvents(col, cellEvents)
-           row.appendChild(col);
-       }
-       return row;
-   }
-
-   function renderGrid () {
-       // append rows and cols to the div with the id grid
-       var grid = document.getElementById('grid');
-       for (var i=0; i<rows; i++) {
-           var r = buildRow(i);
-           grid.appendChild(r);
-       }
-   }
-
-   renderGrid();
-
-  </script>
   </body>
 </html>
