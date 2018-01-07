@@ -31,6 +31,7 @@
      }
      .event {
          padding: 4px;
+         border-style: none;
      }
      #headline {
          color: white;
@@ -68,8 +69,8 @@
 
       <div v-for="(usr, usrIdx) in appointments" v-bind:id="[usrIdx]" class="row">
         <div v-for="(day, dayIdx) in appointments[usrIdx]" v-bind:id="[dayIdx]" class="col-sm">
-          <div v-for="(appointment, appointmentIdx) in appointments[usrIdx][dayIdx]" v-bind:id="[appointmentIdx]">
-            <div v-on:click="alert('click')" v-html="grid.appointments[usrIdx][dayIdx][appointmentIdx].appointment"></div>
+          <div v-for="(appointment, appointmentIdx) in appointments[usrIdx][dayIdx]" v-bind:id="[appointmentIdx]" v-on:click="alert('click')" v-html="grid.appointments[usrIdx][dayIdx][appointmentIdx].appointment">
+            <!-- <div v-on:click="alert('click')" v-html="grid.appointments[usrIdx][dayIdx][appointmentIdx].appointment"></div> -->
           </div>
         </div>
       </div>
@@ -100,8 +101,8 @@
      })
      // grid dimensions
      const cols = 5;
-     const rows = 20;
-     const cellEvents = 10;
+     const rows = 100;
+     const cellEvents = 20;
 
      const events = cols * rows * cellEvents;
 
@@ -152,21 +153,38 @@
          // colored div with event date and onClick listener
          var date = formatDate(randomDate(new Date(), new Date(2018, 0, 12)));
          var node = document.createElement('div');
+         // neeeded because v-html directive expects string. We give container.innerHTML
+         var container = document.createElement('div');
          node.className = randomAlertStyle();
          node.className += ' event';
          node.innerHTML = date;
-         node.addEventListener("click", clickFunction, false);
-         var container = document.createElement('div');
          container.appendChild(node);
          return container;
      }
 
      function genGrid () {
-        // build rows, columns; fill with appointments
+        /** build rows, columns; fill with appointments
+            grid-structure:
+
+            [ // users (rows)
+                [ // usr-week (row)
+                    [{monday-appointment-00}, {...}], // usr-day (column)
+                    [{tuesday-appointment-00}],
+                    [...],
+                    [...],
+                    [...]
+                ],
+                [...], ...
+            ]
+
+        **/
+        // usr
         for (var usrIdx=0; usrIdx<rows; usrIdx++) {
             grid.appointments.push([]);
+            // day
             for (var dayIdx=0; dayIdx<cols; dayIdx++) {
                 grid.appointments[usrIdx].push([]);
+                // appointment
                 for (var appointmentIdx=0; appointmentIdx<cellEvents; appointmentIdx++) {
                     var a = buildEvent();
                     grid.appointments[usrIdx][dayIdx].push({appointment: a.innerHTML});
